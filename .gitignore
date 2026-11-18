@@ -1,0 +1,20 @@
+# Visual Studio 相关
+.vs/
+*.user
+*.suo
+*.VC.db
+CMakeUserPresets.json
+
+# 编译输出目录
+build/
+out/
+bin/
+lib/
+Debug/
+Release/
+
+# 第三方库（通常不建议把第三方库源码放进主仓库，如果是子模块则保留）
+
+# 系统文件
+.DS_Store
+Thumbs.db
