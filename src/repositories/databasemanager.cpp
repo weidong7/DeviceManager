@@ -1,8 +1,7 @@
 #include "databasemanager.h"
-
+#include <plog/Log.h>
 #include <QSqlQuery>
 #include <QSqlError>
-#include <QDebug>
 #include <QDir>
 
 DatabaseManager::DatabaseManager():m_initialized(false) {}
@@ -25,11 +24,11 @@ bool DatabaseManager::initialize(const QString &dbPath)
     m_db.setDatabaseName("data/" + dbPath);
 
     if(!m_db.open()) {
-        qDebug() << "数据库打开失败:" << m_db.lastError().text();
+        PLOG_ERROR << "数据库打开失败: " << m_db.lastError().text().toStdString();
         return false;
     }
 
-    qDebug() << "数据库连接成功:" << dbPath;
+    PLOG_INFO << "数据库连接成功: " << dbPath.toStdString();
 
     // 创建表
     if (!createTables()) {
@@ -63,7 +62,7 @@ bool DatabaseManager::createTables() {
       )";
 
     if (!query.exec(createDevices)) {
-        qDebug() << "创建devices表失败:" << query.lastError().text();
+        PLOG_ERROR << "创建devices表失败: " << query.lastError().text().toStdString();
         return false;
     }
 
@@ -80,7 +79,7 @@ bool DatabaseManager::createTables() {
       )";
 
     if (!query.exec(createUsers)) {
-        qDebug() << "创建users表失败:" << query.lastError().text();
+        PLOG_ERROR << "创建users表失败: " << query.lastError().text().toStdString();
         return false;
     }
 
@@ -97,11 +96,11 @@ bool DatabaseManager::createTables() {
       )";
 
     if (!query.exec(createLogs)) {
-        qDebug() << "创建change_logs表失败:" << query.lastError().text();
+        PLOG_ERROR << "创建change_logs表失败: " << query.lastError().text().toStdString();
         return false;
     }
 
-    qDebug() << "数据表创建成功";
+    PLOG_INFO << "数据表创建成功";
     return true;
 }
 

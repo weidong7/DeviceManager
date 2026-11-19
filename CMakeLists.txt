@@ -12,6 +12,9 @@ set(CMAKE_AUTOUIC ON)  # 自动处理.ui文件
 set(CMAKE_AUTORCC ON)  # 自动处理资源文件
 
 # 查找Qt库
+# 添加 plog 头文件路径
+include_directories(3rdParty/plog/include)
+
 find_package(Qt6 REQUIRED COMPONENTS
     Core
     Widgets
@@ -31,7 +34,10 @@ add_executable(DeviceManager
     src/repositories/LogRepository.h
     src/models/Device.h
     src/models/User.h
-    src/models/ChangeLog.h)
+    src/models/ChangeLog.h
+    src/tests/RepositoryTests.h
+    src/tests/RepositoryTests.cpp
+)
 
 # 日志库 plog (header-only)
 target_include_directories(DeviceManager PRIVATE

@@ -1,10 +1,10 @@
 #include "DeviceRepository.h"
 #include "databasemanager.h"
-
+#include <plog/Log.h>
 #include <QSqlQuery>
 #include <QSqlError>
-#include <QDebug>
 #include <QList>
+#include "UserRepository.h"
 
 DeviceRepository::DeviceRepository()
 {}
@@ -39,7 +39,7 @@ Device DeviceRepository::findById(int id) {
     if (query.exec() && query.next()) {
         return queryToDevice(query);
     }
-    qDebug() << "未找到 ID 为" << id << "的设备";
+    PLOG_WARNING << "未找到设备 ID: " << id;
     return Device();
 }
 
@@ -47,13 +47,13 @@ Device DeviceRepository::findById(int id) {
 QList<Device> DeviceRepository::findAll() {
     QList<Device> devices;
     QSqlQuery query(DatabaseManager::instance().database());
-    if (query.exec("SELECT * FROM device ORDER BY location , category , id")) {
+    if (query.exec("SELECT * FROM devices ORDER BY location , category , id")) {
         while (query.next()) {
             devices.append(queryToDevice(query));
         }
     }
     else {
-        qDebug() << "查询失败:" << query.lastError().text();
+        PLOG_ERROR << "查询失败: " << query.lastError().text().toStdString();
     }
 
     return devices;
@@ -72,19 +72,22 @@ QList<Device> DeviceRepository::findByFilters(const DeviceFilters& filters)
     QList<Device> devices;
     QSqlQuery query(DatabaseManager::instance().database());
 
-    QString sql = "SELECT * FROM device WHERE 1=1";
-    
+    QString sql = "SELECT * FROM devices WHERE 1=1";
+
     if(!filters.location.isEmpty()){
-        sql += "AND location = :location";
+        sql += " AND location = :location";
     }
     if (!filters.category.isEmpty()) {
-        sql += "AND category = :category";
+        sql += " AND category = :category";
     }
     if (!filters.status.isEmpty()) {
-        sql += "AND holder = :holder";
+        sql += " AND status = :status";
+    }
+    if (!filters.holder.isEmpty()) {
+        sql += " AND holder = :holder";
     }
     if (!filters.keyword.isEmpty()) {
-        sql += "mode LINK :keyword OR note LINK :keyword OR holder LINK :keyword";
+        sql += " AND (model LIKE :keyword OR note LIKE :keyword OR holder LIKE :keyword)";
     }
 
     sql += " ORDER BY location, category, id";
@@ -114,7 +117,7 @@ QList<Device> DeviceRepository::findByFilters(const DeviceFilters& filters)
         }
     }
     else {
-        qDebug() << "筛选查询失败:" << query.lastError().text();
+        PLOG_ERROR << "筛选查询失败: " << query.lastError().text().toStdString();
     }
 
     return devices;
@@ -153,11 +156,11 @@ bool DeviceRepository::create(Device& device) {
 
     if (query.exec()) {
         device.id = query.lastInsertId().toInt();  // 设置自增ID
-        qDebug() << "设备插入成功，ID:" << device.id;
+        PLOG_INFO << "设备插入成功，ID: " << device.id;
         return true;
     }
 
-    qDebug() << "设备插入失败:" << query.lastError().text();
+    PLOG_ERROR << "设备插入失败: " << query.lastError().text().toStdString();
     return false;
 }
 
@@ -195,11 +198,11 @@ bool DeviceRepository::update(const Device& device) {
     query.bindValue(":updated_by", device.updatedBy);
 
     if (query.exec()) {
-        qDebug() << "设备更新成功，ID:" << device.id;
+        PLOG_INFO << "设备更新成功，ID: " << device.id;
         return true;
     }
 
-    qDebug() << "设备更新失败:" << query.lastError().text();
+    PLOG_ERROR << "设备更新失败: " << query.lastError().text().toStdString();
     return false;
 }
 
@@ -209,10 +212,10 @@ bool DeviceRepository::deleteById(int id) {
     query.addBindValue(id);
 
     if (query.exec()) {
-        qDebug() << "设备删除成功，ID:" << id;
+        PLOG_INFO << "设备删除成功，ID: " << id;
         return true;
     }
 
-    qDebug() << "设备删除失败:" << query.lastError().text();
+    PLOG_ERROR << "设备删除失败: " << query.lastError().text().toStdString();
     return false;
 }
