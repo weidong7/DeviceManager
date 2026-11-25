@@ -2,14 +2,11 @@
 #include "../repositories/DeviceRepository.h"
 #include "../repositories/UserRepository.h"
 #include "../repositories/LogRepository.h"
+#include "../models/ChangeLog.h"
+#include "../models/User.h"
 #include <plog/Log.h>
 #include <QSqlQuery>
 #include <QSqlError>
-#include "../models/ChangeLog.h"
-#include "../repositories/LogRepository.h"
-#include "../models/User.h"
-#include "RepositoryTests.h"
-#include "../repositories/DeviceRepository.h"
 
 void RepositoryTests::testDeviceRepository() {
     DeviceRepository repo;
