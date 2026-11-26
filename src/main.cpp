@@ -10,7 +10,7 @@
 #include "repositories/DatabaseManager.h"
 #include "utils/SessionManager.h"
 #include "views/LoginDialog.h"
-//#include "views/MainWindow.h"
+#include "views/MainWindow.h"
 
 int main(int argc, char* argv[])
 {
@@ -32,25 +32,24 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    // 显示登录窗口
-    LoginDialog loginDlg;
-    if (loginDlg.exec() != QDialog::Accepted) {
-        PLOG_INFO << "用户取消登录，程序退出";
-        return 0;
-    }
+    //// 显示登录窗口
+    //LoginDialog loginDlg;
+    //if (loginDlg.exec() != QDialog::Accepted) {
+    //    PLOG_INFO << "用户取消登录，程序退出";
+    //    return 0;
+    //}
 
-    // 保存当前用户到 Session (保留一套即可)
-    User user = loginDlg.getUser();
-    bool isAdmin = (user.role == "admin");
-    SessionManager::getInstance().setCurrentUser(user.username, isAdmin);
+    //// 保存当前用户到 Session (保留一套即可)
+    //User user = loginDlg.getUser();
+    //bool isAdmin = (user.role == "admin");
+    //SessionManager::getInstance().setCurrentUser(user.username, isAdmin);
 
-    PLOG_INFO << "当前用户: " << SessionManager::getInstance().getCurrentUser()
-              << " (管理员: " << (SessionManager::getInstance().isAdmin() ? "是" : "否") << ")";
+    //PLOG_INFO << "当前用户: " << SessionManager::getInstance().getCurrentUser()
+    //          << " (管理员: " << (SessionManager::getInstance().isAdmin() ? "是" : "否") << ")";
 
-    QWidget tempWindow;
-    tempWindow.setWindowTitle("设备管理系统 - 主窗口(开发中)");
-    tempWindow.resize(640, 480);
-    tempWindow.show();
+    Mainwindow window;
+    window.show();
+
     PLOG_INFO << "进入主窗口";
 
     return app.exec();
