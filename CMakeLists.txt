@@ -45,6 +45,8 @@ add_executable(DeviceManager
     src/tests/RepositoryTests.cpp
     src/views/mainwindow.cpp
     src/views/mainwindow.h
+    src/views/DeviceDialog.cpp
+    src/views/DeviceDialog.h
 )
 
 # 日志库 plog (header-only) 以及 项目根目录 (确保能找到 src 下的文件)

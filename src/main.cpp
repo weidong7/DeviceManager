@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
     }
 
     //// 显示登录窗口
-    //LoginDialog loginDlg;
+    LoginDialog loginDlg;
     //if (loginDlg.exec() != QDialog::Accepted) {
     //    PLOG_INFO << "用户取消登录，程序退出";
     //    return 0;

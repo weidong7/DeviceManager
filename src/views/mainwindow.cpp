@@ -28,6 +28,7 @@
 #include <QInputDialog>
 #include <QStatusBar>
 #include <plog/Log.h>
+#include "DeviceDialog.h"
 
 Mainwindow::Mainwindow(QWidget *parent)
     : QMainWindow{parent}
@@ -194,6 +195,31 @@ void Mainwindow::applyPermissions()
 }
 
 void Mainwindow::onAdd() {
+
+    DeviceDialog dialog(nullptr, this);
+
+    if (dialog.exec() == QDialog::Accepted) {
+        Device device = dialog.getDevice();
+        device.updatedBy = SessionManager::getInstance().getCurrentUser();
+
+        if (m_repository->create(device)) {
+            // 记录日志
+            LogRepository logRepo;
+            ChangeLog log;
+            log.deviceId = device.id;
+            log.action = "create";
+            log.detail = QString("%1/%2/%3")
+                .arg(device.location).arg(device.category).arg(device.model);
+            log.operatorName = device.updatedBy;
+            logRepo.create(log);
+
+            QMessageBox::information(this, "成功", "设备新增成功");
+            loadData();
+        }
+        else {
+            QMessageBox::critical(this, "失败", "设备新增失败，请查看日志");
+        }
+    }
 }
 void Mainwindow::onEdit() {
 }
